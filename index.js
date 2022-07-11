@@ -5,42 +5,27 @@ const text = require("./const");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 bot.start((ctx) =>
-  ctx.reply(
+  ctx.replyWithHTML(
     `Привет ${
-      ctx.message.from.first_name ? ctx.message.from.first_name : "незнакомец"
-    }!`
+      ctx.message.from.first_name ? `${ctx.message.from.first_name}!` : ","
+    }\nМеня зовут Бот Retail\n\nЯ помогу тебе подобрать одежду в нашем уникальном магазине)\n\nДля этого тебе нужно лишь перейти в каталог и выбрать интересующий тебя товар.\nЕсли возникнут вопросы, то можешь <a href="tg://resolve?domain=retail_manager">связаться с нашим менеджером</a>, он тебе поможет)`,
+    {
+      reply_markup: {
+        keyboard: [[{ text: "Каталог", web_app: { url: process.env.WEBAPP_LINK } }]],
+      },
+    }
   )
 );
 bot.help((ctx) => ctx.reply(text.commands));
 
-bot.command("course", async (ctx) => {
-  try {
-    await ctx.replyWithHTML(
-      "<b>Курсы</b>",
-      Markup.inlineKeyboard([
-        [Markup.button.callback("Длинная", "btn_3")],
-        [
-          Markup.button.callback("Редакторы", "btn_1"),
-          Markup.button.callback("Обзоры", "btn_2"),
-        ],
-      ])
-    );
-  } catch (e) {
-    console.error(e);
-  }
-});
-
-function addActionBot(name, src, text) {
-  bot.action(name, async (ctx) => {
+function connectWithManager() {
+  bot.action("btn_5", async (ctx) => {
     try {
       await ctx.answerCbQuery();
-      if (src !== false) {
-        await ctx.replyWithPhoto({
-          source: src,
-        });
-      }
-      await ctx.replyWithHTML(text, {
-        disable_web_page_preview: true,
+      await ctx.reply("Welcome", {
+        reply_markup: {
+          keyboard: [[{ text: "Каталог", web_app: { url: web_link } }]],
+        },
       });
     } catch (e) {
       console.error(e);
@@ -48,9 +33,7 @@ function addActionBot(name, src, text) {
   });
 }
 
-addActionBot('btn_1', "./img/1.jpg", text.text1)
-addActionBot("btn_2", "./img/2.jpg", text.text2);
-addActionBot("btn_3", false, text.text3);
+connectWithManager();
 
 bot.launch();
 

@@ -18,6 +18,7 @@ bot.start((ctx) =>
 );
 bot.help((ctx) => ctx.reply(text.commands));
 
+
 function connectWithManager() {
   bot.action("btn_5", async (ctx) => {
     try {
